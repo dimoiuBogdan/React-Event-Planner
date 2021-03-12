@@ -1,0 +1,101 @@
+.container {
+  .container-title {
+    margin-bottom: 1.5rem;
+    font-size: 3rem;
+    color: rgb(55, 213, 214);
+    text-shadow: 0px 1px 2px #007070;
+  }
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  font-size: 1.5rem;
+  .input-container {
+    display: flex;
+    width: 100%;
+    margin: 15px auto;
+    flex-direction: column;
+    label {
+      margin-bottom: 10px;
+    }
+    input,
+    textarea {
+      font-size: 1.3rem;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: none;
+      background: rgba(179, 245, 245, 0.5);
+      box-shadow: -5px 6px 26px -4px rgb(45, 175, 175) inset;
+      border: 2px solid rgb(0, 255, 255);
+      outline: none;
+      color: white;
+      transition: 0.3s all;
+    }
+  }
+  button {
+    font-size: 1.7rem;
+    margin: 10px;
+    padding: 2px 20px;
+    border-radius: 2px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s all;
+    letter-spacing: 0.2rem;
+    &.add {
+      background: rgb(0, 255, 255);
+      color: white;
+      text-shadow: 2px 1px 5px rgba(0, 0, 0, 1);
+      border: 2px solid rgb(0, 255, 255);
+      &:hover {
+        background: none;
+        color: rgb(0, 255, 255);
+        text-shadow: none;
+      }
+    }
+    &.cancel {
+      background: none;
+      border: 2px solid rgb(0, 255, 255);
+      text-shadow: none;
+      color: rgb(0, 255, 255);
+      &:hover {
+        color: white;
+        text-shadow: 2px 1px 5px rgba(0, 0, 0, 1);
+        background: rgb(0, 255, 255);
+      }
+    }
+  }
+  .error {
+    text-align: left;
+    font-size: 1.2rem;
+    color: red;
+  }
+  .dates {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .date-input {
+      width: 30%;
+      input {
+        width: 100%;
+      }
+    }
+  }
+  .category {
+    .input {
+      position: relative;
+      input {
+        cursor: pointer;
+        width: 100%;
+        &.dropdownOn {
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
+    }
+    .dropdown {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 100%;
+    }
+  }
+}
