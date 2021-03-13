@@ -18,6 +18,11 @@ export default function Input(props) {
 
   const addEvent = () => {
     if (title && description && category && day && month && year) {
+      let presentTime = new Date();
+      let passed = false;
+      let eventTime = new Date(`${+month}"/"${+day + 1}"/"${+year}`);
+      let daysDiff = Math.ceil((eventTime - presentTime) / (1000 * 3600 * 24));
+      if (daysDiff < 0) passed = true;
       props.setEvents([
         ...props.events,
         {
@@ -25,6 +30,7 @@ export default function Input(props) {
           description: description,
           category: category,
           date: new Date(`${+month}"/"${+day + 1}"/"${+year}`),
+          passed: passed,
         },
       ]);
       hideForm();
@@ -72,14 +78,14 @@ export default function Input(props) {
         <label>Title</label>
         <input type="text" onChange={defineTitle} />
         {titleErrorDisplay ? (
-          <p className="error">You must enter a title!</p>
+          <p className="error">You must enter a valid title!</p>
         ) : null}
       </div>
       <div className="input-container description">
         <label>Description</label>
         <textarea type="text" onChange={defineDescription} />
         {descriptionErrorDisplay ? (
-          <p className="error">You must enter a description!</p>
+          <p className="error">You must enter a valid description!</p>
         ) : null}
       </div>
       <div className="input-container category">
@@ -102,7 +108,7 @@ export default function Input(props) {
           ) : null}
         </div>
         {categoryErrorDisplay ? (
-          <p className="error">You must enter the importance!</p>
+          <p className="error">You must enter a valid importance!</p>
         ) : null}
       </div>
       <div className="input-container date">
@@ -121,7 +127,7 @@ export default function Input(props) {
           </div>
         </div>
         {dateErrorDisplay ? (
-          <p className="error">You must enter a date!</p>
+          <p className="error">You must enter a valid date!</p>
         ) : null}
       </div>
       <button className="add" onClick={addEvent}>

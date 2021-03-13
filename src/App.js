@@ -2,44 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import "./App.scss";
 import Events from "./components/Events";
 import Form from "./components/Form";
-import { Header, Container } from "./StyledComponents";
+import { Container } from "./StyledComponents";
 
 export default function App() {
-  const [nextDays, setNextDays] = useState(30);
   const [showForm, setShowForm] = useState(false);
-  const [events, setEvents] = useState([
-    {
-      title: "Passed",
-      description: "De porc",
-      category: "Important",
-      date: new Date("3/3/2021"),
-    },
-    {
-      title: "NP",
-      description: "De porc",
-      category: "Important",
-      date: new Date("3/15/2021"),
-    },
-    {
-      title: "NP",
-      description: "De porc",
-      category: "Important",
-      date: new Date("3/21/2021"),
-    },
-  ]);
-  const [displayedEvents, setDisplayedEvents] = useState([]);
+  const [events, setEvents] = useState([]);
   const [dateSortingMethod, setDateSortingMethod] = useState("descending");
   const [passedSortingMethod, setPassedSortingMethod] = useState(false);
-  const [passedEvents, setPassedEvents] = useState([]);
-
-  useEffect(() => {
-    filterEventsByDays();
-    sortEventsByDate();
-  }, [events, nextDays, passedEvents]);
-
-  const changeNextDays = (e) => {
-    setNextDays(e.target.value);
-  };
+  const [importanceSortingMethod, setImportanceSortingMethod] = useState();
 
   const showFormHandle = () => {
     setShowForm(true);
@@ -65,51 +35,52 @@ export default function App() {
     }, [ref]);
   }
 
-  const filterEventsByDays = () => {
-    setDisplayedEvents(
-      events.forEach((event) => {
-        let presentTime = new Date();
-        let eventTime = event.date;
-        let daysDiff = Math.ceil(
-          (eventTime - presentTime) / (1000 * 3600 * 24)
-        );
-        if (daysDiff < 0 && !passedEvents.includes(event)) {
-          setPassedEvents([...passedEvents, event]);
-          event.passed = true;
-        }
-        return event;
-      })
-    );
-  };
-
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef);
 
   const sortEventsByDate = () => {
-    const futureEvents = events.filter((event) => {
-      return !event.passed;
-    });
     dateSortingMethod === "ascending"
       ? setDateSortingMethod("descending")
       : setDateSortingMethod("ascending");
     dateSortingMethod === "ascending"
-      ? futureEvents.sort((a, b) => a.date - b.date)
-      : futureEvents.sort((a, b) => b.date - a.date);
-    const sortedEvents = futureEvents.concat(passedEvents);
-    setDisplayedEvents(sortedEvents);
+      ? events.sort((a, b) => a.date - b.date)
+      : events.sort((a, b) => b.date - a.date);
+    setEvents(events);
+  };
+
+  const sortEventsByImportance = () => {
+    events.forEach((event) => {
+      event.category === "Very Important"
+        ? (event.categoryGrade = 3)
+        : event.category === "Important"
+        ? (event.categoryGrade = 2)
+        : event.category === "Not So Important"
+        ? (event.categoryGrade = 1)
+        : (event.categoryGrade = null);
+    });
+    if (!importanceSortingMethod) setImportanceSortingMethod("descending");
+    importanceSortingMethod === "ascending"
+      ? events.sort((a, b) => a.categoryGrade - b.categoryGrade)
+      : events.sort((a, b) => b.categoryGrade - a.categoryGrade);
+    importanceSortingMethod === "ascending"
+      ? setImportanceSortingMethod("descending")
+      : setImportanceSortingMethod("ascending");
+    setEvents(events);
   };
 
   const sortEventsByPassed = () => {
-    passedSortingMethod
-      ? displayedEvents.sort((a, b) => {
-          setPassedSortingMethod(!passedSortingMethod);
-          return a === b ? 0 : a ? -1 : 1;
-        })
-      : displayedEvents.sort((a, b) => {
-          setPassedSortingMethod(!passedSortingMethod);
-          return a === b ? 0 : a ? -1 : -1;
-        });
-    setDisplayedEvents(displayedEvents);
+    if (events.some((event) => event.passed)) {
+      passedSortingMethod
+        ? events.sort((a, b) => {
+            setPassedSortingMethod(!passedSortingMethod);
+            return a === b ? 0 : a ? -1 : 1;
+          })
+        : events.sort((a, b) => {
+            setPassedSortingMethod(!passedSortingMethod);
+            return a === b ? 0 : a ? -1 : -1;
+          });
+      setEvents(events);
+    }
   };
 
   return (
@@ -118,20 +89,6 @@ export default function App() {
         Events <i className="fa fa-plus-square" onClick={showFormHandle}></i>
       </h1>
       <Container>
-        <div className="details">
-          <Header>
-            {displayedEvents.length - passedEvents.length} events in the next{" "}
-            {nextDays} days <br />
-          </Header>
-          <div className="right">
-            <input
-              type="number"
-              value={nextDays}
-              onChange={changeNextDays}
-              min="1"
-            />
-          </div>
-        </div>
         <div className="sorting">
           <h5 onClick={sortEventsByDate}>
             Date{" "}
@@ -141,7 +98,14 @@ export default function App() {
               <i className="fas fa-chevron-down"></i>
             )}
           </h5>
-          <h5>Importance</h5>
+          <h5 onClick={sortEventsByImportance}>
+            Importance{" "}
+            {importanceSortingMethod === "descending" ? (
+              <i className="fas fa-chevron-up"></i>
+            ) : importanceSortingMethod === "ascending" ? (
+              <i className="fas fa-chevron-down"></i>
+            ) : null}
+          </h5>
           <h5 onClick={sortEventsByPassed}>
             Passed{" "}
             {passedSortingMethod ? (
@@ -151,7 +115,7 @@ export default function App() {
             )}
           </h5>
         </div>
-        <Events events={displayedEvents} />
+        <Events events={events} />
       </Container>
       {showForm ? (
         <div className="form">

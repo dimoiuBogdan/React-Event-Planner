@@ -7,7 +7,7 @@ export default function Event(props) {
     <Card className={props.passed ? `passed card-wrap` : "card-wrap"}>
       <div className="title-date">
         <h4>
-          {props.title} -{" "}
+          {props.title} - {props.passed} -{" "}
           <span>
             {props.category}{" "}
             <span className="passed-info">
