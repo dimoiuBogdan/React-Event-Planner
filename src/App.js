@@ -6,9 +6,24 @@ import { Container } from "./StyledComponents";
 
 export default function App() {
   const [showForm, setShowForm] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [dateSortingMethod, setDateSortingMethod] = useState("descending");
-  const [passedSortingMethod, setPassedSortingMethod] = useState(false);
+  const [events, setEvents] = useState([
+    {
+      title: "Test 1",
+      description: "Test description",
+      category: "Important",
+      passed: true,
+      date: new Date("03/05/2021"),
+    },
+    {
+      title: "Test 2",
+      description: "Test description",
+      category: "Very Important",
+      passed: false,
+      date: new Date("03/21/2021"),
+    },
+  ]);
+  const [dateSortingMethod, setDateSortingMethod] = useState();
+  const [passedSortingMethod, setPassedSortingMethod] = useState();
   const [importanceSortingMethod, setImportanceSortingMethod] = useState();
 
   const showFormHandle = () => {
@@ -39,6 +54,7 @@ export default function App() {
   useOutsideAlerter(wrapperRef);
 
   const sortEventsByDate = () => {
+    if (!dateSortingMethod) setDateSortingMethod("descending");
     dateSortingMethod === "ascending"
       ? setDateSortingMethod("descending")
       : setDateSortingMethod("ascending");
@@ -70,7 +86,11 @@ export default function App() {
 
   const sortEventsByPassed = () => {
     if (events.some((event) => event.passed)) {
-      passedSortingMethod
+      if (!passedSortingMethod) setPassedSortingMethod(false);
+      passedSortingMethod === false
+        ? setPassedSortingMethod(true)
+        : setPassedSortingMethod(false);
+      passedSortingMethod === true
         ? events.sort((a, b) => {
             setPassedSortingMethod(!passedSortingMethod);
             return a === b ? 0 : a ? -1 : 1;
@@ -80,6 +100,7 @@ export default function App() {
             return a === b ? 0 : a ? -1 : -1;
           });
       setEvents(events);
+      console.log(passedSortingMethod);
     }
   };
 
@@ -92,11 +113,11 @@ export default function App() {
         <div className="sorting">
           <h5 onClick={sortEventsByDate}>
             Date{" "}
-            {dateSortingMethod === "descending" ? (
+            {dateSortingMethod === "ascending" ? (
               <i className="fas fa-chevron-up"></i>
-            ) : (
+            ) : dateSortingMethod === "descending" ? (
               <i className="fas fa-chevron-down"></i>
-            )}
+            ) : null}
           </h5>
           <h5 onClick={sortEventsByImportance}>
             Importance{" "}
@@ -108,11 +129,11 @@ export default function App() {
           </h5>
           <h5 onClick={sortEventsByPassed}>
             Passed{" "}
-            {passedSortingMethod ? (
+            {passedSortingMethod === true ? (
               <i className="fas fa-chevron-up"></i>
-            ) : (
+            ) : passedSortingMethod === false ? (
               <i className="fas fa-chevron-down"></i>
-            )}
+            ) : null}
           </h5>
         </div>
         <Events events={events} />
@@ -121,6 +142,7 @@ export default function App() {
         <div className="form">
           <div ref={wrapperRef}>
             <Form
+              sortEventsByDate={sortEventsByDate}
               setEvents={setEvents}
               events={events}
               setShowForm={setShowForm}

@@ -1,10 +1,4 @@
 import styled from "styled-components";
-export const Header = styled.h3`
-  color: white;
-  font-weight: 500;
-  font-size: 1.4rem;
-  text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
-`;
 export const Container = styled.div`
   background: red;
   width: ${(props) => (props.inForm ? "600px" : "70%")};

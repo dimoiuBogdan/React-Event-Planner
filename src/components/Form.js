@@ -33,6 +33,7 @@ export default function Input(props) {
           passed: passed,
         },
       ]);
+
       hideForm();
     } else {
       if (!title) setTitleErrorDisplay(true);
