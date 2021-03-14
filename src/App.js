@@ -6,25 +6,17 @@ import { Container } from "./StyledComponents";
 
 export default function App() {
   const [showForm, setShowForm] = useState(false);
-  const [events, setEvents] = useState([
-    {
-      title: "Test 1",
-      description: "Test description",
-      category: "Important",
-      passed: true,
-      date: new Date("03/05/2021"),
-    },
-    {
-      title: "Test 2",
-      description: "Test description",
-      category: "Very Important",
-      passed: false,
-      date: new Date("03/21/2021"),
-    },
-  ]);
+  const [events, setEvents] = useState(() => {
+    const localData = localStorage.getItem("events");
+    return localData ? JSON.parse(localData) : [];
+  });
   const [dateSortingMethod, setDateSortingMethod] = useState();
   const [passedSortingMethod, setPassedSortingMethod] = useState();
   const [importanceSortingMethod, setImportanceSortingMethod] = useState();
+
+  useEffect(() => {
+    localStorage.setItem("events", JSON.stringify(events));
+  }, [events]);
 
   const showFormHandle = () => {
     setShowForm(true);
@@ -136,7 +128,7 @@ export default function App() {
             ) : null}
           </h5>
         </div>
-        <Events events={events} />
+        <Events events={events} setEvents={setEvents} />
       </Container>
       {showForm ? (
         <div className="form">
